@@ -81,9 +81,11 @@ HPLlib       = $(LIBdir)/libhpl.a
 # header files,  MPlib  is defined  to be the name of  the library to be 
 # used. The variable MPdir is only used for defining MPinc and MPlib.
 #
-MPdir        = /usr/local/mpi
-MPinc        = -I$(MPdir)/include
-MPlib        = $(MPdir)/lib/libmpich.a
+# It can be that mpicc implicitly provides the necessary flags.
+#
+# MPdir        = /usr/local/mpi
+# MPinc        = -I$(MPdir)/include
+# MPlib        = $(MPdir)/lib/libmpich.a
 #
 # ----------------------------------------------------------------------
 # - Linear Algebra library (BLAS or VSIPL) -----------------------------
@@ -91,6 +93,12 @@ MPlib        = $(MPdir)/lib/libmpich.a
 # LAinc tells the  C  compiler where to find the Linear Algebra  library
 # header files,  LAlib  is defined  to be the name of  the library to be 
 # used. The variable LAdir is only used for defining LAinc and LAlib.
+#
+# If one has to link with a shared library, a hack is to set
+#
+#   LAlib = -L<path_to_blas> -l<name_of_lib>
+#
+# which should really be set in LDLIBS for the linker.
 #
 LAdir        = $(HOME)/netlib/ARCHIVES/Linux_ATHLON
 LAinc        =
@@ -166,12 +174,12 @@ HPL_DEFS     = $(F2CDEFS) $(HPL_OPTS) $(HPL_INCLUDES)
 # - Compilers / linkers - Optimization flags ---------------------------
 # ----------------------------------------------------------------------
 #
-CC           = /usr/bin/gcc
+CC           = /usr/bin/mpicc
 CCNOOPT      = $(HPL_DEFS)
 CCFLAGS      = $(HPL_DEFS) -fomit-frame-pointer -O3 -funroll-loops -W -Wall
 #
-LINKER       = /usr/bin/g77
-LINKFLAGS    = $(CCFLAGS)
+LINKER       = $(CC)
+LINKFLAGS    =
 #
 ARCHIVER     = ar
 ARFLAGS      = r
